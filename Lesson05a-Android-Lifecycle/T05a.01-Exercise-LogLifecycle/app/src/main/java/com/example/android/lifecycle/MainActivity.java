@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         // COMPLETED (1) Use logAndAppend within onCreate
         logAndAppend("onCreate");
+        logAndAppend
     }
 
     // COMPLETED (2) Override onStart, call super.onStart, and call logAndAppend with ON_START
