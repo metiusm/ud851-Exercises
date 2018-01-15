@@ -29,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText mNewGuestNameEditText;
     private EditText mNewPartySizeEditText;
 
-    // TODO (13) Create a constant string LOG_TAG that is equal to the class.getSimpleName()
+    // COMPLETED (13) Create a constant string LOG_TAG that is equal to the class.getSimpleName()
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,20 +78,28 @@ public class MainActivity extends AppCompatActivity {
      */
     public void addToWaitlist(View view) {
 
-        // TODO (9) First thing, check if any of the EditTexts are empty, return if so
-
-        // TODO (10) Create an integer to store the party size and initialize to 1
-
-        // TODO (11) Use Integer.parseInt to parse mNewPartySizeEditText.getText to an integer
-
-        // TODO (12) Make sure you surround the Integer.parseInt with a try catch and log any exception
-
-        // TODO (14) call addNewGuest with the guest name and party size
-
-        // TODO (19) call mAdapter.swapCursor to update the cursor by passing in getAllGuests()
-
-        // TODO (20) To make the UI look nice, call .getText().clear() on both EditTexts, also call clearFocus() on mNewPartySizeEditText
-
+        // COMPLETED (9) First thing, check if any of the EditTexts are empty, return if so
+        Boolean emptyText = false;
+        if(mNewGuestNameEditText.getText().toString().trim() == "") emptyText = true;
+        if(mNewPartySizeEditText.getText().toString().trim() == "") emptyText = true;
+        if(emptyText) return;
+        // COMPLETED (10) Create an integer to store the party size and initialize to 1
+        Integer partySize = 1;
+        // COMPLETED (11) Use Integer.parseInt to parse mNewPartySizeEditText.getText to an integer
+        try {
+            partySize = Integer.parseInt(mNewPartySizeEditText.getText().toString());
+            // COMPLETED (12) Make sure you surround the Integer.parseInt with a try catch and log any exception
+        }
+        catch(NumberFormatException nfe) {
+            Log.e("NumberFormatException","Failed to parse party size text to number: " + nfe.getMessage());
+        }
+        // COMPLETED (14) call addNewGuest with the guest name and party size
+        addGuest(mNewGuestNameEditText.getText().toString().trim(), partySize);
+        // COMPLETED (19) call mAdapter.swapCursor to update the cursor by passing in getAllGuests()
+        mAdapter.swapCursor(getAllGuests());
+        // COMPLETED (20) To make the UI look nice, call .getText().clear() on both EditTexts, also call clearFocus() on mNewPartySizeEditText
+        mNewGuestNameEditText.getText().clear();
+        mNewPartySizeEditText.getText().clear();
     }
 
 
