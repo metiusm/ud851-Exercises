@@ -57,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
         // Get the views
         // TODO (1) You'll probably want more than just the Button
         mButton = (Button) findViewById(R.id.button_next);
+        mButton.setOnClickListener(new View.OnClickListener() {
+           public void onClick(View v) {
+               if(mData != null)
+               {
+                   mData.moveToNext();
+               }
+           }
+           });
 
         //Run the database operation to get the cursor off of the main thread
         new WordFetchTask().execute();
