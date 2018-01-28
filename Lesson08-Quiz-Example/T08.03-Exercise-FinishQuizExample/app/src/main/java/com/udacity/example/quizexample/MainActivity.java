@@ -23,8 +23,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.udacity.example.droidtermsprovider.DroidTermsExampleContract;
+
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 /**
  * Gets the data from the ContentProvider and shows a series of flash cards.
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private int mCurrentState;
 
     private Button mButton;
+    private TextView mTextViewWord;
+    private TextView mTextViewDefinition;
 
     // This state is when the word definition is hidden and clicking the button will therefore
     // show the definition
@@ -55,16 +61,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Get the views
-        // TODO (1) You'll probably want more than just the Button
+        // COMPLETED (1) You'll probably want more than just the Button
+        mTextViewWord = (TextView) findViewById(R.id.text_view_word);
+        mTextViewDefinition = (TextView) findViewById(R.id.text_view_definition);
+
         mButton = (Button) findViewById(R.id.button_next);
-        mButton.setOnClickListener(new View.OnClickListener() {
-           public void onClick(View v) {
-               if(mData != null)
-               {
-                   mData.moveToNext();
-               }
-           }
-           });
 
         //Run the database operation to get the cursor off of the main thread
         new WordFetchTask().execute();
@@ -91,31 +92,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextWord() {
+        if(mData != null) {
+            // Change button text
+            mButton.setText(getString(R.string.show_definition));
 
-        // Change button text
-        mButton.setText(getString(R.string.show_definition));
+            // COMPLETED (3) Go to the next word in the Cursor, show the next word and hide the definition
+            // Note that you shouldn't try to do this if the cursor hasn't been set yet.
+            // If you reach the end of the list of words, you should start at the beginning again.
 
-        // TODO (3) Go to the next word in the Cursor, show the next word and hide the definition
-        // Note that you shouldn't try to do this if the cursor hasn't been set yet.
-        // If you reach the end of the list of words, you should start at the beginning again.
-        mCurrentState = STATE_HIDDEN;
+            if (!mData.moveToNext())
+                mData.moveToFirst();
 
+
+            mCurrentState = STATE_HIDDEN;
+
+            mTextViewDefinition.setVisibility(INVISIBLE);
+
+            mButton.setText(getString(R.string.show_definition));
+
+            mTextViewWord.setText(mData.getString(mData.getColumnIndex(DroidTermsExampleContract.COLUMN_WORD)));
+        }
     }
 
     public void showDefinition() {
+        if(mData != null) {
+            // Change button text
+            mButton.setText(getString(R.string.next_word));
 
-        // Change button text
-        mButton.setText(getString(R.string.next_word));
+            // COMPLETED (4) Show the definition
+            mCurrentState = STATE_SHOWN;
 
-        // TODO (4) Show the definition
-        mCurrentState = STATE_SHOWN;
+            mTextViewDefinition.setVisibility(VISIBLE);
 
+            mTextViewDefinition.setText(mData.getString(mData.getColumnIndex(DroidTermsExampleContract.COLUMN_DEFINITION)));
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // TODO (5) Remember to close your cursor!
+        // COMPLETED (5) Remember to close your cursor!
+        if(mData != null) mData.close();
     }
 
     // Use an async task to do the data fetch off of the main thread.
@@ -144,8 +161,9 @@ public class MainActivity extends AppCompatActivity {
             // Set the data for MainActivity
             mData = cursor;
 
-            // TODO (2) Initialize anything that you need the cursor for, such as setting up
+            // COMPLETED (2) Initialize anything that you need the cursor for, such as setting up
             // the screen with the first word and setting any other instance variables
+            nextWord();
         }
     }
 
